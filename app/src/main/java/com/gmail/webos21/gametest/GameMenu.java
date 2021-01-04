@@ -6,9 +6,6 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 
 
-/**
- * @author Himi
- */
 public class GameMenu {
 
     private Bitmap bmpMenu;
@@ -20,7 +17,7 @@ public class GameMenu {
     private Boolean isPress;
 
     public GameMenu(Bitmap bmpMenu, Bitmap bmpButton, Bitmap bmpButtonPress, Bitmap bmpStart1, Bitmap bmpStart2) {
-        this.bmpMenu = Bitmap.createScaledBitmap(bmpMenu, MySurfaceView.screenW, MySurfaceView.screenH,  false);
+        this.bmpMenu = Bitmap.createScaledBitmap(bmpMenu, MySurfaceView.screenW, MySurfaceView.screenH, false);
         this.bmpButton = bmpButton;
         this.bmpButtonPress = bmpButtonPress;
         this.bmpstart1 = bmpStart1;

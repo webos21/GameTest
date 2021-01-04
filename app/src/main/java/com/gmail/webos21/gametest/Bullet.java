@@ -4,9 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-/**
- * @author Himi
- */
+
 public class Bullet {
 
     public static final int BULLET_PLAYER = -1;

@@ -1,6 +1,7 @@
 package com.gmail.webos21.gametest;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -22,11 +24,10 @@ import android.view.SurfaceView;
 import java.util.Random;
 import java.util.Vector;
 
-/**
- * @author Himi
- */
-
 public class MySurfaceView extends SurfaceView implements Callback, Runnable {
+
+    public static final String TAG = "MySurface";
+
     public static final int GAME_MENU = 0;
     public static final int GAMEING = 1;
     public static final int GAME_WIN = 2;
@@ -95,8 +96,6 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
     private int countPlayerBullet;
     private Vector<Boom> vcBoom;
     private Boss boss;
-    private AudioManager am;
-
 
     private Bitmap bmpclip;
     private Canvas canvasclip;
@@ -104,6 +103,20 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 
     public MySurfaceView(Context context) {
         super(context);
+        initView(context);
+    }
+
+    public MySurfaceView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView(context);
+    }
+
+    public MySurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initView(context);
+    }
+
+    private void initView(Context context) {
         sfh = this.getHolder();
         sfh.addCallback(this);
         paint = new Paint();
@@ -116,35 +129,14 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
         setFocusable(true);
         setFocusableInTouchMode(true);
 
-        sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
-        soundId_long = sp.load(context, R.raw.boom, 1);
-        shoot = sp.load(context, R.raw.shoot, 1);
-        enemy_shoot = sp.load(context, R.raw.enemy_shoot, 1);
+        if (!isInEditMode()) {
+            sp = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
+            soundId_long = sp.load(context, R.raw.boom, 1);
+            shoot = sp.load(context, R.raw.shoot, 1);
+            enemy_shoot = sp.load(context, R.raw.enemy_shoot, 1);
+        }
 
         this.setKeepScreenOn(true);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        screenW = this.getWidth();
-        screenH = this.getHeight();
-
-        mediaPlayer = MediaPlayer.create(getContext(), R.raw.bg1);
-        mediaPlayer2 = MediaPlayer.create(getContext(), R.raw.bg2);
-        mediaPlayer.setLooping(true);
-        mediaPlayer2.setLooping(true);
-
-        bmpclip = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
-        canvasclip = new Canvas(bmpclip);
-        canvasclip.drawColor(Color.WHITE);
-
-        am = (AudioManager) MainActivity.instance.getSystemService(Context.AUDIO_SERVICE);
-
-        initGame();
-        flag = true;
-
-        th = new Thread(this);
-        th.start();
     }
 
     void initGame() {
@@ -188,11 +180,11 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
             bmpEnemyBullet = BitmapFactory.decodeResource(res, R.drawable.bullet_enemy);
             bmpBossBullet = BitmapFactory.decodeResource(res, R.drawable.boosbullet);
 
-            vcBoom = new Vector<Boom>();
+            vcBoom = new Vector<>();
 
-            vcBullet = new Vector<Bullet>();
+            vcBullet = new Vector<>();
 
-            vcBulletPlayer = new Vector<Bullet>();
+            vcBulletPlayer = new Vector<>();
 
             gameMenu = new GameMenu(bmpMenu, bmpButton, bmpButtonPress, bmpStart1, bmpStart2);
             gamePause = new GamePause(bmpPause_bg, bmpPause_back, bmpPause_continue, bmpPause_exit);
@@ -200,12 +192,12 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 
             backGround = new GameBg(bmpBackGround, bmpGamePause);
             player = new Player(bmpPlayer, bmpPlayerHp);
-            vcEnemy = new Vector<Enemy>();
+            vcEnemy = new Vector<>();
             random = new Random();
 
             boss = new Boss(bmpEnemyBoss);
 
-            vcBulletBoss = new Vector<Bullet>();
+            vcBulletBoss = new Vector<>();
         }
     }
 
@@ -245,7 +237,7 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
                         player.draw(canvas, paint);
                         player.draw(canvasclip, paint);
 
-                        if (isBoss == false) {
+                        if (!isBoss) {
                             for (int i = 0; i < vcEnemy.size(); i++) {
                                 vcEnemy.elementAt(i).draw(canvas, paint);
                                 vcEnemy.elementAt(i).draw(canvasclip, paint);
@@ -304,8 +296,10 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
         switch (gameState) {
             case GAME_MENU:
                 gameMenu.onTouchEvent(event);
@@ -320,7 +314,6 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
                 gamePause.onTouchEvent(event);
                 break;
             case GAME_WIN:
-                break;
             case GAME_LOST:
                 break;
         }
@@ -331,11 +324,13 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (gameState == GAMEING || gameState == GAME_WIN || gameState == GAME_LOST) {
+                Log.d(TAG, "BackButton on NOT MENU....");
                 gameState = GAME_MENU;
                 isBoss = false;
                 initGame();
                 enemyArrayIndex = 0;
             } else if (gameState == GAME_MENU) {
+                Log.d(TAG, "BackButton on MENU....");
                 MainActivity.instance.finish();
                 System.exit(0);
             }
@@ -343,15 +338,12 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
         }
 
         switch (gameState) {
-            case GAME_MENU:
-                break;
             case GAMEING:
                 player.onKeyDown(keyCode, event);
                 break;
+            case GAME_MENU:
             case GAME_PAUSE:
-                break;
             case GAME_WIN:
-                break;
             case GAME_LOST:
                 break;
         }
@@ -368,15 +360,12 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
         }
 
         switch (gameState) {
-            case GAME_MENU:
-                break;
             case GAMEING:
                 player.onKeyUp(keyCode, event);
                 break;
+            case GAME_MENU:
             case GAME_PAUSE:
-                break;
             case GAME_WIN:
-                break;
             case GAME_LOST:
                 break;
         }
@@ -390,7 +379,7 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
             case GAMEING:
                 backGround.logic();
                 player.logic();
-                if (isBoss == false) {
+                if (!isBoss) {
                     for (int i = 0; i < vcEnemy.size(); i++) {
                         Enemy en = vcEnemy.elementAt(i);
                         if (en.isDead) {
@@ -452,7 +441,7 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
                         for (int i = 0; i < vcEnemy.size(); i++) {
                             Enemy en = vcEnemy.elementAt(i);
 
-                            int bulletType = 0;
+                            int bulletType;
                             switch (en.type) {
                                 case Enemy.TYPE_FLY:
                                     bulletType = Bullet.BULLET_FLY;
@@ -819,6 +808,27 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
     }
 
     @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        screenW = this.getWidth();
+        screenH = this.getHeight();
+
+        mediaPlayer = MediaPlayer.create(getContext(), R.raw.bg1);
+        mediaPlayer2 = MediaPlayer.create(getContext(), R.raw.bg2);
+        mediaPlayer.setLooping(true);
+        mediaPlayer2.setLooping(true);
+
+        bmpclip = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
+        canvasclip = new Canvas(bmpclip);
+        canvasclip.drawColor(Color.WHITE);
+
+        initGame();
+        flag = true;
+
+        th = new Thread(this);
+        th.start();
+    }
+
+    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     }
 
@@ -826,4 +836,6 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
     public void surfaceDestroyed(SurfaceHolder holder) {
         flag = false;
     }
+
+
 }

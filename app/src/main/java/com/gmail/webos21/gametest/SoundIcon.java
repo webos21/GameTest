@@ -33,7 +33,7 @@ public class SoundIcon {
             if (pointX > btn_sound_x - 25 && pointX < btn_sound_x + bmpSound.getWidth() + 25) {
                 if (pointY > btn_sound_y - 25 && pointY < btn_sound_y + bmpSound.getHeight() + 25) {
                     if (pointX > btn_sound_x && pointX < btn_sound_x + bmpSound.getWidth() && pointY > btn_sound_y && pointY < btn_sound_y + bmpSound.getHeight()) {
-
+                        // nothing to do
                     } else {
                         if (pointX > btn_sound_x)
                             btn_sound_x += (pointX - btn_sound_x) * 0.9;

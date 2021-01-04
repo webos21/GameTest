@@ -6,9 +6,6 @@ import android.graphics.Paint;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-/**
- * @author Himi
- */
 public class Player {
 
     public int x, y, xtarget, ytarget, xmove, ymove;

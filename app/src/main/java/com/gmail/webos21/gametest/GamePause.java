@@ -5,9 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
-/**
- * @author Himi
- */
 public class GamePause {
 
     private Bitmap bmpPause_bg;
@@ -19,7 +16,7 @@ public class GamePause {
     private Boolean isPress, flag;
 
     public GamePause(Bitmap bmpPause_bg, Bitmap bmpPause_back, Bitmap bmpPause_continue, Bitmap bmpPause_exit) {
-        this.bmpPause_bg = Bitmap.createScaledBitmap(bmpPause_bg, MySurfaceView.screenW, MySurfaceView.screenH,  false);
+        this.bmpPause_bg = Bitmap.createScaledBitmap(bmpPause_bg, MySurfaceView.screenW, MySurfaceView.screenH, false);
         this.bmpButton = bmpPause_back;
         this.bmpPause_continue = bmpPause_continue;
         this.bmpPause_exit = bmpPause_exit;
