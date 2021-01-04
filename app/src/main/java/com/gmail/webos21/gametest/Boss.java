@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.pg;
+package com.gmail.webos21.gametest;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

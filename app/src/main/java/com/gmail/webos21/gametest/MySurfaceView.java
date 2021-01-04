@@ -1,4 +1,4 @@
-package com.pg;
+package com.gmail.webos21.gametest;
 
 
 import android.content.Context;
@@ -84,7 +84,7 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
     private GamePause gamePause;
     private Player player;
     private Vector<Enemy> vcEnemy;
-    private int createEnemyTime = 50;
+    private int createEnemyTime = 150;
     private int count;
     private int enemyArray[][] = {{1, 2, 3, 4}, {2, 1, 4, 2}, {2, 3, 2, 3}, {1, 1, 1}, {5, 2}, {2, 1, 5}, {-1}};
     private boolean isBoss;
@@ -649,8 +649,8 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
             logic();
             long end = System.currentTimeMillis();
             try {
-                if (end - start < 50) {
-                    Thread.sleep(50 - (end - start));
+                if (end - start < 17) {
+                    Thread.sleep(17 - (end - start));
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

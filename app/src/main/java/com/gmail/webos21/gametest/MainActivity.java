@@ -1,4 +1,4 @@
-package com.pg;
+package com.gmail.webos21.gametest;
 
 import android.app.Activity;
 import android.os.Bundle;
